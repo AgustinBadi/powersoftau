@@ -85,11 +85,11 @@ pub fn keypair<R: Rng, E: Engine>(rng: &mut R, digest: &[u8]) -> (PublicKey<E>, 
         // Compute BLAKE2b(personalization | transcript | g^s | g^{s*x})
         let h: generic_array::GenericArray<u8, U64> = {
             let mut h = Blake2b::default();
-            h.input(&[personalization]);
-            h.input(digest);
-            h.input(g1_s.into_uncompressed().as_ref());
-            h.input(g1_s_x.into_uncompressed().as_ref());
-            h.result()
+            Digest :: update(&mut h, &[personalization]);
+            Digest :: update(&mut h, digest);
+            Digest :: update(&mut h, g1_s.into_uncompressed().as_ref());
+            Digest :: update(&mut h, g1_s_x.into_uncompressed().as_ref());
+            h.finalize().into()
         };
         // Hash into G2 as g^{s'}
         let g2_s: E::G2Affine = hash_to_g2::<E>(h.as_ref()).into_affine();
@@ -248,8 +248,8 @@ impl<E: Engine> PublicKey<E> {
         fn read_uncompressed<EE: Engine, C: CurveAffine<Engine = EE, Scalar = EE::Fr>>(input_map: &Mmap, position: usize) -> Result<C, DeserializationError> {
             let mut repr = C::Uncompressed::empty();
             let element_size = C::Uncompressed::size();
-            let memory_slice = input_map.get(position..position+element_size).expect("must read point data from file");
-            memory_slice.clone().read_exact(repr.as_mut())?;
+            let mut memory_slice = input_map.get(position..position+element_size).expect("must read point data from file");
+            memory_slice.read_exact(repr.as_mut())?;
             let v = repr.into_affine()?;
 
             if v.is_zero() {

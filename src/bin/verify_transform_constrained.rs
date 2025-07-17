@@ -91,8 +91,8 @@ fn main() {
     // Check the hash chain - a new response must be based on the previous challenge!
     {
         let mut response_challenge_hash = [0; 64];
-        let memory_slice = response_readable_map.get(0..64).expect("must read point data from file");
-        memory_slice.clone().read_exact(&mut response_challenge_hash).expect("couldn't read hash of challenge file from response file");
+        let mut memory_slice = response_readable_map.get(0..64).expect("must read point data from file");
+        memory_slice.read_exact(&mut response_challenge_hash).expect("couldn't read hash of challenge file from response file");
 
         println!("`response` was based on the hash:");
         for line in response_challenge_hash.chunks(16) {

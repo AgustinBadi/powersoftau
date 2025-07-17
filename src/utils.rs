@@ -17,7 +17,7 @@ use std::io::{self, Read, Write};
 use std::sync::{Arc, Mutex};
 use generic_array::GenericArray;
 use typenum::consts::U64;
-use blake2::{Blake2b, Digest};
+use blake2::{Blake2b, Blake2b512, Digest};
 use std::fmt;
 
 use super::parameters::*;
@@ -137,7 +137,7 @@ pub fn power_pairs<E: Engine, G: CurveAffine<Engine = E, Scalar = E::Fr>>(v: &[G
 
 /// Compute BLAKE2b("")
 pub fn blank_hash() -> GenericArray<u8, U64> {
-    Blake2b::new().result()
+    Blake2b512::digest("").into()
 }
 
 /// Checks if pairs have the same ratio.
@@ -172,13 +172,13 @@ pub fn compute_g2_s<E: Engine> (
     personalization: u8
 ) -> E::G2Affine  
 {
-    let mut h = Blake2b::default();
-    h.input(&[personalization]);
-    h.input(digest);
-    h.input(g1_s.into_uncompressed().as_ref());
-    h.input(g1_s_x.into_uncompressed().as_ref());
+    let mut h = Blake2b512::default();
+    Digest :: update(&mut h, &[personalization]);
+    Digest :: update(&mut h, digest);
+    Digest :: update(&mut h, g1_s.into_uncompressed().as_ref());
+    Digest :: update(&mut h, g1_s_x.into_uncompressed().as_ref());
 
-    hash_to_g2::<E>(h.result().as_ref()).into_affine()
+    hash_to_g2::<E>(h.finalize().as_ref()).into_affine()
 }
 
 /// Perform multi-exponentiation. The caller is responsible for ensuring that

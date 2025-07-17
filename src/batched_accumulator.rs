@@ -72,10 +72,10 @@ impl<E:Engine, P: PowersOfTauParameters> BachedAccumulator<E, P> {
         let chunk_size = 1 << 30; // read by 1GB from map
         let mut hasher = Blake2b::default();
         for chunk in input_map.chunks(chunk_size) {
-            hasher.input(&chunk);
+            Digest::update(&mut hasher, &chunk);
         }
 
-        hasher.result()
+        hasher.finalize().into()
     }
 }
 
@@ -143,14 +143,14 @@ impl<E:Engine, P: PowersOfTauParameters> BachedAccumulator<E, P> {
             ElementType::TauG1 => {
                 let mut position = 0;
                 position += g1_size * index;
-                assert!(index < P::TAU_POWERS_G1_LENGTH, format!("Index of TauG1 element written must not exceed {}, while it's {}", P::TAU_POWERS_G1_LENGTH, index));
+                assert!(index < P::TAU_POWERS_G1_LENGTH, "Index of TauG1 element written must not exceed {}, while it's {}", P::TAU_POWERS_G1_LENGTH, index);
 
                 position
             },
             ElementType::TauG2 => {
                 let mut position = 0;
                 position += g1_size * required_tau_g1_power;
-                assert!(index < P::TAU_POWERS_LENGTH, format!("Index of TauG2 element written must not exceed {}, while it's {}", P::TAU_POWERS_LENGTH, index));
+                assert!(index < P::TAU_POWERS_LENGTH, "Index of TauG2 element written must not exceed {}, while it's {}", P::TAU_POWERS_LENGTH, index);
                 position += g2_size * index;
 
                 position
@@ -159,7 +159,7 @@ impl<E:Engine, P: PowersOfTauParameters> BachedAccumulator<E, P> {
                 let mut position = 0;
                 position += g1_size * required_tau_g1_power;
                 position += g2_size * required_power;
-                assert!(index < P::TAU_POWERS_LENGTH, format!("Index of AlphaG1 element written must not exceed {}, while it's {}", P::TAU_POWERS_LENGTH, index));
+                assert!(index < P::TAU_POWERS_LENGTH, "Index of AlphaG1 element written must not exceed {}, while it's {}", P::TAU_POWERS_LENGTH, index);
                 position += g1_size * index;
 
                 position
@@ -169,7 +169,7 @@ impl<E:Engine, P: PowersOfTauParameters> BachedAccumulator<E, P> {
                 position += g1_size * required_tau_g1_power;
                 position += g2_size * required_power;
                 position += g1_size * required_power;
-                assert!(index < P::TAU_POWERS_LENGTH, format!("Index of BetaG1 element written must not exceed {}, while it's {}", P::TAU_POWERS_LENGTH, index));
+                assert!(index < P::TAU_POWERS_LENGTH, "Index of BetaG1 element written must not exceed {}, while it's {}", P::TAU_POWERS_LENGTH, index);
                 position += g1_size * index;
 
                 position
@@ -475,8 +475,8 @@ impl<E:Engine, P: PowersOfTauParameters> BachedAccumulator<E, P> {
             };
             let position = Self::calculate_mmap_position(index, element_type, compression);
             let element_size = Self::get_size(element_type, compression);
-            let memory_slice = input_map.get(position..position+element_size).expect("must read point data from file");
-            memory_slice.clone().read_exact(encoded.as_mut())?;
+            let mut memory_slice = input_map.get(position..position+element_size).expect("must read point data from file");
+            memory_slice.read_exact(encoded.as_mut())?;
         }
 
         // Allocate space for the deserialized elements

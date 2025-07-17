@@ -22,6 +22,7 @@ use powersoftau::parameters::PowersOfTauParameters;
 
 #[macro_use]
 extern crate hex_literal;
+use hex_literal::hex;
 
 const INPUT_IS_COMPRESSED: UseCompression = UseCompression::No;
 const COMPRESS_THE_OUTPUT: UseCompression = UseCompression::Yes;

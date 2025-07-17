@@ -46,7 +46,7 @@ use std::io::{self, Read, Write};
 use std::sync::{Arc, Mutex};
 use generic_array::GenericArray;
 use typenum::consts::U64;
-use blake2::{Blake2b, Digest};
+use blake2::{Blake2b, Blake2b512, Digest};
 use std::fmt;
 
 use super::keypair::*;
@@ -323,12 +323,12 @@ pub fn verify_transform<E: Engine, P: PowersOfTauParameters>(before: &Accumulato
     assert_eq!(digest.len(), 64);
 
     let compute_g2_s = |g1_s: E::G1Affine, g1_s_x: E::G1Affine, personalization: u8| {
-        let mut h = Blake2b::default();
-        h.input(&[personalization]);
-        h.input(digest);
-        h.input(g1_s.into_uncompressed().as_ref());
-        h.input(g1_s_x.into_uncompressed().as_ref());
-        hash_to_g2::<E>(h.result().as_ref()).into_affine()
+        let mut h = Blake2b512::default();
+        Digest :: update(&mut h, &[personalization]);
+        Digest :: update(&mut h, digest);
+        Digest :: update(&mut h, g1_s.into_uncompressed().as_ref());
+        Digest :: update(&mut h, g1_s_x.into_uncompressed().as_ref());
+        hash_to_g2::<E>(h.finalize().as_ref()).into_affine()
     };
 
     let tau_g2_s = compute_g2_s(key.tau_g1.0, key.tau_g1.1, 0);
@@ -396,7 +396,7 @@ pub fn verify_transform<E: Engine, P: PowersOfTauParameters>(before: &Accumulato
 /// Abstraction over a reader which hashes the data being read.
 pub struct HashReader<R: Read> {
     reader: R,
-    hasher: Blake2b
+    hasher: Blake2b512
 }
 
 impl<R: Read> HashReader<R> {
@@ -410,7 +410,7 @@ impl<R: Read> HashReader<R> {
 
     /// Destroy this reader and return the hash of what was read.
     pub fn into_hash(self) -> GenericArray<u8, U64> {
-        self.hasher.result()
+        self.hasher.finalize().into()
     }
 }
 
@@ -419,7 +419,7 @@ impl<R: Read> Read for HashReader<R> {
         let bytes = self.reader.read(buf)?;
 
         if bytes > 0 {
-            self.hasher.input(&buf[0..bytes]);
+            Digest::update(&mut self.hasher, &buf[0..bytes]);
         }
 
         Ok(bytes)
@@ -429,7 +429,7 @@ impl<R: Read> Read for HashReader<R> {
 /// Abstraction over a writer which hashes the data being written.
 pub struct HashWriter<W: Write> {
     writer: W,
-    hasher: Blake2b
+    hasher: Blake2b512
 }
 
 impl<W: Write> HashWriter<W> {
@@ -443,7 +443,7 @@ impl<W: Write> HashWriter<W> {
 
     /// Destroy this writer and return the hash of what was written.
     pub fn into_hash(self) -> GenericArray<u8, U64> {
-        self.hasher.result()
+        self.hasher.finalize().into()
     }
 }
 
@@ -452,7 +452,7 @@ impl<W: Write> Write for HashWriter<W> {
         let bytes = self.writer.write(buf)?;
 
         if bytes > 0 {
-            self.hasher.input(&buf[0..bytes]);
+            Digest::update(&mut self.hasher, &buf[0..bytes]);
         }
 
         Ok(bytes)

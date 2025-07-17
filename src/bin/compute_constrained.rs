@@ -17,6 +17,9 @@ use memmap::*;
 
 use std::io::{Read, Write};
 
+use generic_array::GenericArray;
+use typenum::U64;
+
 use powersoftau::parameters::PowersOfTauParameters;
 
 const INPUT_IS_COMPRESSED: UseCompression = UseCompression::No;
@@ -34,14 +37,14 @@ fn main() {
         use rand::{SeedableRng, Rng, OsRng};
         use rand::chacha::ChaChaRng;
 
-        let h = {
+        let h: GenericArray<u8, U64> = {
             let mut system_rng = OsRng::new().unwrap();
             let mut h = Blake2b::default();
 
             // Gather 1024 bytes of entropy from the system
             for _ in 0..1024 {
                 let r: u8 = system_rng.gen();
-                h.input(&[r]);
+                Digest::update(&mut h, &[r]);
             }
 
             // Ask the user to provide some information for additional entropy
@@ -50,8 +53,8 @@ fn main() {
             std::io::stdin().read_line(&mut user_input).expect("expected to read some random text from the user");
 
             // Hash it all up to make a seed
-            h.input(&user_input.as_bytes());
-            h.result()
+            Digest::update(&mut h, &user_input.as_bytes());
+            h.finalize().into()
         };
 
         let mut digest = &h[..];
@@ -133,8 +136,8 @@ fn main() {
 
     {
         let mut challenge_hash = [0; 64];
-        let memory_slice = readable_map.get(0..64).expect("must read point data from file");
-        memory_slice.clone().read_exact(&mut challenge_hash).expect("couldn't read hash of challenge file from response file");
+        let mut memory_slice: &[u8] = readable_map.get(0..64).expect("must read point data from file");
+        memory_slice.read_exact(&mut challenge_hash).expect("couldn't read hash of challenge file from response file");
 
         println!("`challenge` file claims (!!! Must not be blindly trusted) that it was based on the original contribution with a hash:");
         for line in challenge_hash.chunks(16) {
