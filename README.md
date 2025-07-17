@@ -26,14 +26,27 @@ Instructions for a planned ceremony will be posted when everything is tested and
 
 ## Ceremony layout
 
-1. `new_constrained :: challenge`
-2. `compute_constrained :: challenge -> response`
-3. `verify_transform_constrained :: challenge -> response -> new_challenge`
+t0 - start: block N in Cardano will be on October, 10
+blake2b(N.header)
+
+1. `new_constrained :: (empty_)challenge` (coordinator)
+2. `compute_constrained :: randomness -> challenge -> response` (participant N)
+-- move to the next participant
+4. `verify_transform_constrained :: challenge -> response -> new_challenge` (coordinator or ?everyone who wants to verify the setup?)
 4. rm challenge response; mv new_challenge challenge
 5. if (more participants) then goto 2 else goto 6
    ...
-6. `beacon_constrained:: beacon -> challenge -> response`
-7. `verify_transform_constrained :: challenge -> response -> final_challenge`
+6. `beacon_constrained :: random_beacon -> challenge -> response`  (coordinator)
+7. `verify_transform_constrained :: challenge -> response -> final_challenge`  (coordinator)
+
+# Questions
+
+1. Why do we need to hash the beacon's value if it's already a random value? (Ariel + Eryx)
+2. What is that other branch? (Ariel)
+3. How is verification can be done by anyone who wants to check that the transcript is correct? (Ilia)
+4. Alpha and beta: do we need them, and shall we split up powers of tau the final setup for those who don't need alpha and beta? (Agustín)
+5. In which format should the final setup come in? (Agustín)
+6. Do we want to port the ceremony to Hydrozoa or just use this software? (Ilia/George) 
 
 ## To run the ceremony on your laptop:
 
