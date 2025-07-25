@@ -9,7 +9,6 @@ extern crate rand;
 use powersoftau::batched_accumulator::BatchedAccumulator;
 use powersoftau::keypair::keypair;
 use powersoftau::parameters::{CheckForCorrectness, UseCompression};
-// use powersoftau::bls12_381::{Bls12CeremonyParameters};
 use powersoftau::small_bls12_381::Bls12CeremonyParameters;
 
 use bellman::pairing::bls12_381::Bls12;

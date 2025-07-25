@@ -5,7 +5,6 @@ extern crate memmap;
 extern crate powersoftau;
 extern crate rand;
 
-// use powersoftau::bls12_381::{Bls12CeremonyParameters};
 use powersoftau::batched_accumulator::BatchedAccumulator;
 use powersoftau::keypair::PublicKey;
 use powersoftau::parameters::{CheckForCorrectness, UseCompression};

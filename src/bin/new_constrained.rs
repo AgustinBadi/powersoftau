@@ -2,7 +2,6 @@ extern crate bellman;
 extern crate memmap;
 extern crate powersoftau;
 
-// use powersoftau::bls12_381::{Bls12CeremonyParameters};
 use powersoftau::batched_accumulator::BatchedAccumulator;
 use powersoftau::parameters::UseCompression;
 use powersoftau::small_bls12_381::Bls12CeremonyParameters;
