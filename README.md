@@ -42,8 +42,8 @@ blake2b(N.header)
 # Questions
 
 1. Why do we need to hash the beacon's value if it's already a random value? (Ariel + Eryx)
-2. What is that other branch? (Ariel)
-3. How is verification can be done by anyone who wants to check that the transcript is correct? (Ilia)
+2. What is `cq` branch - see https://github.com/euonymos/powersoftau/pull/2 (Ariel)
+3. How can verification be done by anyone who wants to check that the transcript is correct? (Ilia)
 4. Alpha and beta: do we need them, and shall we split up powers of tau the final setup for those who don't need alpha and beta? (Agustín)
 5. In which format should the final setup come in? (Agustín)
 6. Do we want to port the ceremony to Hydrozoa or just use this software? (Ilia/George) 
