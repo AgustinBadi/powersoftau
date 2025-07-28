@@ -749,6 +749,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "powersoftau-tui"
+version = "0.2.0"
+dependencies = [
+ "powersoftau-core",
+]
+
+[[package]]
 name = "proc-macro2"
 version = "0.4.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
