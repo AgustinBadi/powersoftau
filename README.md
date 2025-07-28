@@ -2,19 +2,52 @@
 
 ## Original story
 
-This is a [multi-party computation](https://en.wikipedia.org/wiki/Secure_multi-party_computation) (MPC) ceremony which constructs partial zk-SNARK parameters for _all_ circuits up to a depth of 2<sup>21</sup>. It works by taking a step that is performed by all zk-SNARK MPCs and performing it in just one single ceremony. This makes individual zk-SNARK MPCs much cheaper and allows them to scale to practically unbounded numbers of participants.
+This is a [multi-party computation](https://en.wikipedia.org/wiki/Secure_multi-party_computation) (MPC) ceremony which
+constructs partial zk-SNARK parameters for _all_ circuits up to a depth of 2<sup>21</sup>. It works by taking a step
+that is performed by all zk-SNARK MPCs and performing it in just one single ceremony. This makes individual zk-SNARK
+MPCs much cheaper and allows them to scale to practically unbounded numbers of participants.
 
-This protocol is described in a [forthcoming paper](https://eprint.iacr.org/2017/1050). It produces parameters for an adaptation of [Jens Groth's 2016 pairing-based proving system](https://eprint.iacr.org/2016/260) using the [BLS12-381](https://github.com/ebfull/pairing/tree/master/src/bls12_381) elliptic curve construction. The security proof relies on a randomness beacon being applied at the end of the ceremony.
+This protocol is described in a [forthcoming paper](https://eprint.iacr.org/2017/1050). It produces parameters for an
+adaptation of [Jens Groth's 2016 pairing-based proving system](https://eprint.iacr.org/2016/260) using
+the [BLS12-381](https://github.com/ebfull/pairing/tree/master/src/bls12_381) elliptic curve construction. The security
+proof relies on a randomness beacon being applied at the end of the ceremony.
 
 ## Contributions
 
-Extended to support Ethereum's BN256 curve and made it easier to change size of the ceremony. In addition proof generation process can be done in memory constrained environments now. Benchmark is around `1.3 Gb` of memory and `3 hours` for a `2^26` power of tau on BN256 curve on my personal laptop
+Extended to support Ethereum's BN256 curve and made it easier to change size of the ceremony. In addition proof
+generation process can be done in memory constrained environments now. Benchmark is around `1.3 Gb` of memory and
+`3 hours` for a `2^26` power of tau on BN256 curve on my personal laptop
 
 ## Instructions
 
 Instructions for a planned ceremony will be posted when everything is tested and finalized.
 
 ---
+
+## Ceremony layout
+
+t0 - start: block N in Cardano will be on October, 10
+blake2b(N.header)
+
+1. `new_constrained :: (empty_)challenge` (coordinator)
+2. `compute_constrained :: randomness -> challenge -> response` (participant N)
+-- move to the next participant
+4. `verify_transform_constrained :: challenge -> response -> new_challenge` (coordinator or ?everyone who wants to verify the setup?)
+4. rm challenge response; mv new_challenge challenge
+5. if (more participants) then goto 2 else goto 6
+   ...
+6. `beacon_constrained :: random_beacon -> challenge -> response`  (coordinator)
+7. `verify_transform_constrained :: challenge -> response -> final_challenge`  (coordinator)
+
+# Questions
+
+1. Why do we need to hash the beacon's value if it's already a random value? (Ariel + Eryx)
+2. What is `cq` branch - see https://github.com/euonymos/powersoftau/pull/2 (Ariel)
+3. How can verification be done by anyone who wants to check that the transcript is correct? (Ilia)
+4. Alpha and beta: do we need them, and shall we split up powers of tau the final setup for those who don't need alpha and beta? (Agustín)
+5. In which format should the final setup come in? (Agustín)
+6. Do we want to port the ceremony to Hydrozoa or just use this software? (Ilia/George) 
+
 ## To run the ceremony on your laptop:
 
 1. Preparation:
@@ -45,7 +78,8 @@ mv new_challenge challenge
 cargo run --release --bin compute_constrained # generate response file
 ```
 
-Put your hash from output response to private gist (example: https://gist.github.com/skywinder/c35ab03c66c6b200b33ea2f388a6df89)
+Put your hash from output response to private gist (
+example: https://gist.github.com/skywinder/c35ab03c66c6b200b33ea2f388a6df89)
 
 6. Reboot laptop to clean up toxic waste.
 
@@ -53,7 +87,9 @@ Put your hash from output response to private gist (example: https://gist.github
 
 ## Recommendations from original ceremony
 
-Participants of the ceremony sample some randomness, perform a computation, and then destroy the randomness. **Only one participant needs to do this successfully to ensure the final parameters are secure.** In order to see that this randomness is truly destroyed, participants may take various kinds of precautions:
+Participants of the ceremony sample some randomness, perform a computation, and then destroy the randomness. **Only one
+participant needs to do this successfully to ensure the final parameters are secure.** In order to see that this
+randomness is truly destroyed, participants may take various kinds of precautions:
 
 * putting the machine in a Faraday cage
 * destroying the machine afterwards
@@ -66,14 +102,15 @@ Participants of the ceremony sample some randomness, perform a computation, and 
 * using an unusual Rust toolchain or [alternate rust compiler](https://github.com/thepowersgang/mrustc)
 * lots of other ideas we can't think of
 
-It is totally up to the participants. In general, participants should beware of side-channel attacks and assume that remnants of the randomness will be in RAM after the computation has finished.
+It is totally up to the participants. In general, participants should beware of side-channel attacks and assume that
+remnants of the randomness will be in RAM after the computation has finished.
 
 ## License
 
 Licensed under either of
 
- * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
- * MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+* Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+* MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
 
 at your option.
 
