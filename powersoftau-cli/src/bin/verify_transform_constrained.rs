@@ -2,13 +2,12 @@ extern crate bellman;
 extern crate blake2;
 extern crate byteorder;
 extern crate memmap;
-extern crate powersoftau;
 extern crate rand;
 
-use powersoftau::batched_accumulator::BatchedAccumulator;
-use powersoftau::keypair::PublicKey;
-use powersoftau::parameters::{CheckForCorrectness, UseCompression};
-use powersoftau::small_bls12_381::Bls12CeremonyParameters;
+use powersoftau_core::batched_accumulator::BatchedAccumulator;
+use powersoftau_core::keypair::PublicKey;
+use powersoftau_core::parameters::{CheckForCorrectness, UseCompression};
+use powersoftau_core::small_bls12_381::Bls12CeremonyParameters;
 
 use bellman::pairing::bls12_381::Bls12;
 use memmap::*;
@@ -16,7 +15,7 @@ use std::fs::OpenOptions;
 
 use std::io::{Read, Write};
 
-use powersoftau::parameters::PowersOfTauParameters;
+use powersoftau_core::parameters::PowersOfTauParameters;
 
 const PREVIOUS_CHALLENGE_IS_COMPRESSED: UseCompression = UseCompression::No;
 const CONTRIBUTION_IS_COMPRESSED: UseCompression = UseCompression::Yes;

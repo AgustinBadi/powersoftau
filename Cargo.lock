@@ -524,7 +524,23 @@ dependencies = [
 ]
 
 [[package]]
-name = "powersoftau"
+name = "powersoftau-cli"
+version = "0.2.0"
+dependencies = [
+ "bellman",
+ "blake2",
+ "byteorder",
+ "generic-array",
+ "hex-literal",
+ "memmap",
+ "powersoftau-core",
+ "rand 0.4.6",
+ "rust-crypto",
+ "typenum",
+]
+
+[[package]]
+name = "powersoftau-core"
 version = "0.2.0"
 dependencies = [
  "bellman",

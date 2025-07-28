@@ -1,0 +1,25 @@
+[package]
+name = "powersoftau-core"
+version = "0.2.0"
+authors = ["Sean Bowe", "Alex Vlasov"]
+license = "MIT/Apache-2.0"
+edition = "2018"
+
+description = "Core library for Powers of Tau MPC ceremony"
+documentation = "https://docs.rs/powersoftau/"
+homepage = "https://github.com/matter-labs/powersoftau"
+repository = "https://github.com/matter-labs/powersoftau"
+
+[dependencies]
+bellman = { workspace = true }
+blake2 = { workspace = true }
+byteorder = { workspace = true }
+crossbeam = { workspace = true }
+generic-array = { workspace = true }
+hex-literal = { workspace = true }
+itertools = { workspace = true }
+memmap = { workspace = true }
+num_cpus = { workspace = true }
+rand = { workspace = true }
+rust-crypto = { workspace = true }
+typenum = { workspace = true }

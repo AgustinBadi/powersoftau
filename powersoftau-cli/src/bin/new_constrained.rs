@@ -1,18 +1,17 @@
 extern crate bellman;
 extern crate memmap;
-extern crate powersoftau;
 
-use powersoftau::batched_accumulator::BatchedAccumulator;
-use powersoftau::parameters::UseCompression;
-use powersoftau::small_bls12_381::Bls12CeremonyParameters;
-use powersoftau::utils::blank_hash;
+use powersoftau_core::batched_accumulator::BatchedAccumulator;
+use powersoftau_core::parameters::UseCompression;
+use powersoftau_core::small_bls12_381::Bls12CeremonyParameters;
+use powersoftau_core::utils::blank_hash;
 
 use bellman::pairing::bls12_381::Bls12;
 use memmap::*;
 use std::fs::OpenOptions;
 use std::io::Write;
 
-use powersoftau::parameters::PowersOfTauParameters;
+use powersoftau_core::parameters::PowersOfTauParameters;
 
 const COMPRESS_NEW_CHALLENGE: UseCompression = UseCompression::No;
 
