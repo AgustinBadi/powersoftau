@@ -12,3 +12,5 @@ repository = "https://github.com/matter-labs/powersoftau"
 
 [dependencies]
 powersoftau-core = { path = "../powersoftau-core" }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
