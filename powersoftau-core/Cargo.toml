@@ -14,6 +14,7 @@ repository = "https://github.com/matter-labs/powersoftau"
 bellman = { workspace = true }
 blake2 = { workspace = true }
 byteorder = { workspace = true }
+config = { workspace = true }
 crossbeam = { workspace = true }
 generic-array = { workspace = true }
 hex-literal = { workspace = true }
@@ -22,4 +23,5 @@ memmap = { workspace = true }
 num_cpus = { workspace = true }
 rand = { workspace = true }
 rust-crypto = { workspace = true }
+serde = { workspace = true }
 typenum = { workspace = true }

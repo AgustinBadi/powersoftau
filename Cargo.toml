@@ -9,6 +9,7 @@ resolver = "2"
 bellman = { git = 'https://github.com/matterinc/bellman', tag = "0.2.0" }
 blake2 = "0.10"
 byteorder = "1.5"
+config = "0.13"
 crossbeam = "0.4"
 generic-array = "0.14.7"
 hex-literal = "1.0"
@@ -17,4 +18,5 @@ memmap = "0.7.0"
 num_cpus = "1.17"
 rand = "0.4"
 rust-crypto = "0.2"
+serde = { version = "1.0", features = ["derive"] }
 typenum = "1.18"

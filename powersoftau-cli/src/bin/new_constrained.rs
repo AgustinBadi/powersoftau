@@ -5,24 +5,30 @@ use powersoftau_core::batched_accumulator::BatchedAccumulator;
 use powersoftau_core::parameters::UseCompression;
 use powersoftau_core::small_bls12_381::Bls12CeremonyParameters;
 use powersoftau_core::utils::blank_hash;
+use powersoftau_core::RuntimeCeremonyParameters;
 
 use bellman::pairing::bls12_381::Bls12;
 use memmap::*;
 use std::fs::OpenOptions;
 use std::io::Write;
 
-use powersoftau_core::parameters::PowersOfTauParameters;
-
-const COMPRESS_NEW_CHALLENGE: UseCompression = UseCompression::No;
 
 fn main() {
+    // Load ceremony configuration
+    let params = RuntimeCeremonyParameters::from_env_with_defaults()
+        .expect("Failed to load ceremony configuration");
+    
+    params.print_info();
+    
+    let compress_new_challenge = params.use_compression();
+    
     println!(
         "Will generate an empty accumulator for 2^{} powers of tau",
-        Bls12CeremonyParameters::REQUIRED_POWER
+        params.required_power()
     );
     println!(
         "In total will generate up to {} powers",
-        Bls12CeremonyParameters::TAU_POWERS_G1_LENGTH
+        params.tau_powers_g1_length()
     );
 
     let file = OpenOptions::new()
@@ -32,12 +38,11 @@ fn main() {
         .open("challenge")
         .expect("unable to create `./challenge`");
 
-    let expected_challenge_length = match COMPRESS_NEW_CHALLENGE {
+    let expected_challenge_length = match compress_new_challenge {
         UseCompression::Yes => {
-            Bls12CeremonyParameters::CONTRIBUTION_BYTE_SIZE
-                - Bls12CeremonyParameters::PUBLIC_KEY_SIZE
+            params.contribution_byte_size() - params.public_key_size()
         }
-        UseCompression::No => Bls12CeremonyParameters::ACCUMULATOR_BYTE_SIZE,
+        UseCompression::No => params.accumulator_byte_size(),
     };
 
     file.set_len(expected_challenge_length as u64)
@@ -72,7 +77,7 @@ fn main() {
 
     BatchedAccumulator::<Bls12, Bls12CeremonyParameters>::generate_initial(
         &mut writable_map,
-        COMPRESS_NEW_CHALLENGE,
+        compress_new_challenge,
     )
     .expect("generation of initial accumulator is successful");
     writable_map

@@ -1,0 +1,28 @@
+# Powers of Tau Ceremony Configuration
+
+[ceremony]
+# Power of 2 for the ceremony size (2^required_power)
+# 8 = 256 powers (supports ~2M constraints)
+# 10 = 1024 powers (supports ~8M constraints)  
+# 12 = 4096 powers (supports ~33M constraints)
+required_power = 8
+
+# Whether to use point compression for ceremony files
+# "yes" = smaller files, "no" = faster processing
+compression = "no"
+
+# Whether to check point correctness during deserialization
+# Recommended: true for production, false for development
+check_correctness = true
+
+[curve]
+# Elliptic curve parameters - BLS12-381 settings
+name = "bls12_381"
+
+# Uncompressed point sizes (bytes)
+g1_uncompressed_byte_size = 96
+g2_uncompressed_byte_size = 192
+
+# Compressed point sizes (bytes)  
+g1_compressed_byte_size = 48
+g2_compressed_byte_size = 96

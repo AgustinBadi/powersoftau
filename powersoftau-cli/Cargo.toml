@@ -15,9 +15,11 @@ powersoftau-core = { path = "../powersoftau-core" }
 bellman = { workspace = true }
 blake2 = { workspace = true }
 byteorder = { workspace = true }
+config = { workspace = true }
 generic-array = { workspace = true }
 hex-literal = { workspace = true }
 memmap = { workspace = true }
 rand = { workspace = true }
 rust-crypto = { workspace = true }
+serde = { workspace = true }
 typenum = { workspace = true }
